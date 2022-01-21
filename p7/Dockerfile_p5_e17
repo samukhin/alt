@@ -1,0 +1,21 @@
+FROM busybox AS builder
+WORKDIR /rootfs
+RUN wget http://ftp.altlinux.org/pub/distributions/ALTLinux/images/p7/starterkits/altlinux-p7-ovz-generic-20160312-x86_64.tar.xz && \
+tar -xf altlinux-p7-ovz-generic-20160312-x86_64.tar.xz && \
+rm -rf altlinux-p7-ovz-generic-20160312-x86_64.tar.xz && \
+echo "rpm [p7] http://mirror.yandex.ru/altlinux/p5/branch x86_64 classic" >> /rootfs/etc/apt/sources.list.d/yandex.list
+
+FROM scratch
+COPY --from=builder /rootfs /
+RUN apt-get update && apt-get upgrade -y && apt-get clean
+RUN apt-get install -y libeina=0.9.9.063-alt0.M51.1 && \
+apt-get install -y libeet=1.2.3-alt0.M51.1 && \
+apt-get install -y libevas=0.9.9.063-alt0.M51.1 && \
+apt-get install -y libecore=0.9.9.063-alt0.M51.1 && \
+apt-get install -y libembryo=0.9.9.063-alt0.M51.1 && \
+apt-get install -y libedje=0.9.93.063-alt0.M51.1 && \
+apt-get install -y libefreet=0.5.0.063-alt0.M51.1 && \
+apt-get install -y libedbus=0.5.0.063-alt0.M51.1 && \
+apt-get install -y e17=0.16.999.063-alt0.M51.1
+
+CMD /bin/bash
